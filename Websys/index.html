@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Data</title>
+    <script src="jequery.min.js"></script>
+    <link rel="stylesheet" href="userForm.css">
+</head>
+<body>
+
+    <div id="rightSide">
+      <div class="addbtn">  <h1>DATA RECORDS</h1>
+        <div class="btn">
+        <a href="create.html"> + </a>
+       
+        </div>
+        </div>
+        <div id="tableDiv">
+            <table border="1">
+                <thead>
+                    <th>User Id</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Sex</th>
+                    <th>Birth Date</th>
+                    <th>Credits</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody id="result"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(() => {
+            $.get(`http://localhost:8000/api/users`).done((data) => {
+                var tbody = $('#result');
+                tbody.empty();
+
+                data.forEach((user) => {
+                    var out = $('<tr>');
+                    out.append('<td class="userId">' + user.id + '</td>');
+                    out.append('<td>' + user.first_name + '</td>');
+                    out.append('<td>' + user.last_name + '</td>');
+                    out.append('<td>' + user.address + '</td>');
+                    out.append('<td>' + user.phone + '</td>');
+                    out.append('<td>' + user.email + '</td>');
+                    out.append('<td>' + user.sex + '</td>');
+                    out.append('<td>' + user.birthdate + '</td>');
+                    const userCredits = parseFloat(user.max_credit).toLocaleString(undefined, { style: 'currency', currency: 'PHP' })
+                    out.append('<td>' + userCredits + '</td>');
+                    out.append('<td><button class="updateUser" data-user-id="' + user.id + '">Update</button></td>');
+
+                    tbody.append(out);
+                })
+            })
+
+            // Handle click event for "Update" button
+            $('#result').on('click', '.updateUser', function () {
+                const userId = $(this).data('user-id');
+                // Redirect to the update page with the user ID
+                window.location.href = 'updateUser.html?userId=' + userId;
+            });
+        })
+    </script>
+</body>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+    }
+    
+    #rightSide {
+        max-width: 1200px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+        text-align: center;
+        color: #333;
+        text-shadow: #a0458c 2px 2px;
+    }
+    
+    hr {
+        margin: 20px 0;
+    }
+    
+    .addbtn {
+        display: flex;
+        gap: 12px;
+        width: 50%;
+        margin-left: 35%;
+    }
+    
+    .btn a {
+        text-decoration: none;
+        font-size: 24px;
+        background-color: #af4c96;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .btn {
+        margin-top: 4%;
+    }
+    
+    .addbtn a:hover {
+        background-color: #a0458c;
+    }
+    
+    #tableDiv {
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #725f72;
+        color: #fff;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    td {
+        cursor: pointer;
+    }
+    
+    .updateUser {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .updateUser:hover {
+        background-color: #2980b9;
+    }
+    </style>
+    
+</html>

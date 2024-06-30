@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <script src="jequery.min.js"></script>
+    </head>
+<body>
+
+<div class="container">
+    <h1>Update User</h1>
+
+    <div class="return"><a href="index.html">RETURN</a></div>
+
+    <form id="updateUserForm">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="sex">Sex:</label>
+        <select id="sex" name="sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <label for="birthdate">Birth Date:</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+
+        <label for="max_credit">Max Credit:</label>
+        <input type="number" id="max_credit" name="max_credit" step="0.01" required>
+<br>
+        <button type="button" id="updateBtn">Update User</button>
+        <button type="button" id="deleteBtn">Delete User</button>
+    </form>
+</div></div>
+    <script>
+        $(document).ready(() => {
+            // Retrieve user ID from the URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+
+            // Fetch user data based on the user ID
+            $.get(`http://localhost:8000/api/users/${userId}`).done((userData) => {
+                // Populate the form with user data
+                $('#first_name').val(userData.first_name);
+                $('#last_name').val(userData.last_name);
+                $('#address').val(userData.address);
+                $('#phone').val(userData.phone);
+                $('#email').val(userData.email);
+                $('#sex').val(userData.sex);
+                $('#birthdate').val(userData.birthdate);
+                $('#max_credit').val(userData.max_credit);
+            });
+
+            // Handle click event for "Update User" button
+            $('#updateBtn').click(() => {
+                const data = $('#updateUserForm').serialize();
+
+                // Send a PATCH request to update the user
+                $.ajax({
+                    url: `http://localhost:8000/api/users/${userId}`,
+                    type: 'PATCH',
+                    data: data,
+                    success: (response) => {
+                        alert(`User with ID#${userId} has been updated successfully.`);
+                        // Redirect back to the user data page
+                        window.location.href = 'index.html';
+                    },
+                    error: (error) => {
+                        alert(`Failed to update user. Error: ${error.responseText}`);
+                    }
+                });
+            });
+
+            // Handle click event for "Delete User" button
+            $('#deleteBtn').click(() => {
+                if (confirm('Are you sure you want to delete this user?')) {
+                    // Send a DELETE request to delete the user
+                    $.ajax({
+                        url: `http://localhost:8000/api/users/${userId}`,
+                        type: 'DELETE',
+                        success: (response) => {
+                            alert(`User with ID#${userId} has been deleted successfully.`);
+                            // Redirect back to the user data page
+                            window.location.href = 'index.html';
+                        },
+                        error: (error) => {
+                            alert(`Failed to delete user. Error: ${error.responseText}`);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <style>
+        #updateUserForm label{
+            display: block;
+        }
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.return {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#deleteBtn {
+    background-color: #ff3333;
+    margin-left: 10px;
+}
+
+#deleteBtn:hover {
+    background-color: #cc0000;
+}
+a{
+    border: 1px solid black;
+    text-decoration: none;
+    color: blue;
+}
+    </style>
+</body>
+</html>
